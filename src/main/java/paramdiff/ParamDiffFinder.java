@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParamDiffFinder {
-    public List<ParamDiff> findParamAddition(String oldCode, String newCode) {
+    public List<ParamAdditionDiff> findParamAddition(String oldCode, String newCode) {
         return new ArrayList<>();
     }
 }
