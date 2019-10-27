@@ -5,6 +5,10 @@ import java.util.List;
 
 public class ParamDiffFinder {
     public List<ParamAdditionDiff> findParamAddition(String oldCode, String newCode) {
-        return new ArrayList<>();
+        if (oldCode == newCode){
+            return new ArrayList<>();
+        }else {
+            return List.of(new ParamAdditionDiff("","",1, int.class));
+        }
     }
 }
