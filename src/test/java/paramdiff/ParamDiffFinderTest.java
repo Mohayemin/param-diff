@@ -17,13 +17,23 @@ public class ParamDiffFinderTest {
     }
 
     @Test
-    public void findParamAddition_addParamAtEnd() throws IOException {
+    public void findParamAddition_addParamAtEnd_int() throws IOException {
         var code1 = getCalculatorCode(1);
         var code2 = getCalculatorCode(2);
         var paramDiff = new ParamDiffFinder().findParamAddition(code1, code2);
         Assertions.assertEquals(1, paramDiff.size());
         Assertions.assertEquals(1, paramDiff.get(0).indexOfAddedParam);
-        Assertions.assertEquals(int.class, paramDiff.get(0).typeOfAddedParam);
+        Assertions.assertEquals("int", paramDiff.get(0).typeOfAddedParam);
+    }
+
+    @Test
+    public void findParamAddition_addParamAtEnd_double() throws IOException {
+        var code1 = getCalculatorCode(1);
+        var code3 = getCalculatorCode(3);
+        var paramDiff = new ParamDiffFinder().findParamAddition(code1, code3);
+        Assertions.assertEquals(1, paramDiff.size());
+        Assertions.assertEquals(1, paramDiff.get(0).indexOfAddedParam);
+        Assertions.assertEquals("double", paramDiff.get(0).typeOfAddedParam);
     }
 
     private String getCalculatorCode(int suffix) {
