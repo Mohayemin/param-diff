@@ -22,7 +22,7 @@ public class ParamDiffFinderTest {
         var code2 = getCalculatorCode(2);
         var paramDiff = new ParamDiffFinder().findParamAddition(code1, code2);
         Assertions.assertEquals(1, paramDiff.size());
-        Assertions.assertEquals(1, paramDiff.get(0).indexOfAddedParam);
+        Assertions.assertEquals(2, paramDiff.get(0).indexOfAddedParam);
         Assertions.assertEquals("int", paramDiff.get(0).typeOfAddedParam);
     }
 
@@ -32,7 +32,7 @@ public class ParamDiffFinderTest {
         var code3 = getCalculatorCode(3);
         var paramDiff = new ParamDiffFinder().findParamAddition(code1, code3);
         Assertions.assertEquals(1, paramDiff.size());
-        Assertions.assertEquals(1, paramDiff.get(0).indexOfAddedParam);
+        Assertions.assertEquals(2, paramDiff.get(0).indexOfAddedParam);
         Assertions.assertEquals("double", paramDiff.get(0).typeOfAddedParam);
     }
 

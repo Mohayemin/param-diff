@@ -14,7 +14,7 @@ public class ParamDiffFinder {
 
             var newMethod = newCode.getType(0).getMethods().get(0);
             var addedParam = newMethod.getParameter(2).getTypeAsString();
-            var diff = new ParamAdditionDiff("", "", 1, addedParam);
+            var diff = new ParamAdditionDiff("", "", 2, addedParam);
             return List.of(diff);
         }
     }
