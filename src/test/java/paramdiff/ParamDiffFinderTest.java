@@ -66,7 +66,8 @@ public class ParamDiffFinderTest {
         var code1 = getCalculatorCode(1);
         var code2 = getCalculatorCode(2);
 
-        new ParamDiffFinder().findParamAddition(code1, code2);
+        var additions = new ParamDiffFinder().findParamAddition(code1, code2);
+        Assertions.assertEquals(1, additions.size());
     }
 
     private String getCalculatorCode(int suffix) {

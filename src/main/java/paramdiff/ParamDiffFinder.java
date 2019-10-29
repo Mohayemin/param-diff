@@ -16,35 +16,42 @@ public class ParamDiffFinder {
 
         var oldTypes = oldCode.getTypes();
         var newTypes = newCode.getTypes();
-
+        var diffs = new ArrayList<ParamAdditionDiff>();
         for (var oldType : oldTypes) {
             var newType = findMatchingClass(newTypes, oldType);
-            if (newType == null)
-                continue;
+            diffs.addAll(findParamAdditions(oldType, newType));
+        }
 
-            var paramModifiedMethods = new ArrayList<MethodDeclaration>();
-            List<MethodDeclaration> newMethods = newType.getMethods();
-            for (var oldMethod : oldType.getMethods()) {
-                var newMethod = findMatchingMethod(newType, oldMethod);
-                if (newMethod != null) {
-                    newMethods.remove(newMethod);
-                } else {
-                    paramModifiedMethods.add(oldMethod);
-                }
-            }
+        return diffs;
+    }
 
-            for (var oldMethod : paramModifiedMethods) {
-                var addedParams = newMethods.stream()
-                        .filter(m -> m.getNameAsString() == oldMethod.getNameAsString())
-                        .filter(m -> m.getParameters().size() > oldMethod.getParameters().size());
-                if (addedParams.count() == 0)
-                    continue;
+    private List<ParamAdditionDiff> findParamAdditions(TypeDeclaration<?> oldType, TypeDeclaration newType) {
+        if (newType == null)
+            return List.of();
 
-                System.out.println(oldMethod.getDeclarationAsString());
+        var paramModifiedMethods = new ArrayList<MethodDeclaration>();
+        List<MethodDeclaration> newMethods = newType.getMethods();
+        for (var oldMethod : oldType.getMethods()) {
+            var newMethod = findMatchingMethod(newType, oldMethod);
+            if (newMethod != null) {
+                newMethods.remove(newMethod);
+            } else {
+                paramModifiedMethods.add(oldMethod);
             }
         }
 
-        return List.of();
+        var diffs = new ArrayList<ParamAdditionDiff>();
+        for (var oldMethod : paramModifiedMethods) {
+            var addedParams = newMethods.stream()
+                    .filter(m -> m.getNameAsString().equals(oldMethod.getNameAsString()))
+                    .filter(m -> m.getParameters().size() > oldMethod.getParameters().size());
+            if (addedParams.count() == 0)
+                continue;
+
+            diffs.add(new ParamAdditionDiff(oldMethod, newMethods.get(0)));
+        }
+
+        return diffs;
     }
 
     private MethodDeclaration findMatchingMethod(TypeDeclaration type, MethodDeclaration method) {
@@ -60,10 +67,7 @@ public class ParamDiffFinder {
     }
 
     private TypeDeclaration findMatchingClass(NodeList<TypeDeclaration<?>> typeList, TypeDeclaration typeToFind) {
-        System.out.println(typeList.stream().map(tl->tl.getFullyQualifiedName().get()).collect(Collectors.toList()));
         return typeList.stream()
-                .filter(nt -> nt.getFullyQualifiedName().get().equals(typeToFind.getFullyQualifiedName().get())).findFirst().get();
+                .filter(nt -> nt.getFullyQualifiedName().equals(typeToFind.getFullyQualifiedName())).findFirst().get();
     }
-
-
 }
