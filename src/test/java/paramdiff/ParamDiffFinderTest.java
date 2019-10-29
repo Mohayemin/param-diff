@@ -10,51 +10,54 @@ import java.nio.file.Paths;
 
 public class ParamDiffFinderTest {
     @Test
-    public void findParamAddition_nodiff_emptyList() throws IOException {
-        var code = getCalculatorCode(1);
+    public void findParamAddition_nodiff_emptyList() {
+        var code = getTestData("Calculator1");
         var paramDiff = new ParamDiffFinder().findParamAddition(code, code);
         Assertions.assertEquals(0, paramDiff.size());
     }
 
     @Test
-    public void findParamAddition_addParamAtEnd_int() throws IOException {
-        var code1 = getCalculatorCode(1);
-        var code2 = getCalculatorCode(2);
+    public void findParamAddition_addParamAtEnd_int() {
+        var code1 = getTestData("Calculator1");
+        var code2 = getTestData("Calculator2");
         var paramDiff = new ParamDiffFinder().findParamAddition(code1, code2);
         Assertions.assertEquals(1, paramDiff.size());
     }
 
     @Test
-    public void findParamAddition_addParamAtEnd_double() throws IOException {
-        var code1 = getCalculatorCode(1);
-        var code3 = getCalculatorCode(3);
+    public void findParamAddition_addParamAtEnd_double() {
+        var code1 = getTestData("Calculator1");
+        var code3 = getTestData("Calculator3");
         var paramDiff = new ParamDiffFinder().findParamAddition(code1, code3);
         Assertions.assertEquals(1, paramDiff.size());
     }
 
     @Test
-    public void findParamAddition_addFourthParamAtEnd() throws IOException {
-        var code2 = getCalculatorCode(2);
-        var code4 = getCalculatorCode(4);
+    public void findParamAddition_addFourthParamAtEnd() {
+        var code2 = getTestData("Calculator2");
+        var code4 = getTestData("Calculator4");
         var paramDiff = new ParamDiffFinder().findParamAddition(code2, code4);
         Assertions.assertEquals(1, paramDiff.size());
     }
 
     @Test
-    public void findParamAddition_addParamAtStart() throws IOException {
-        var code2 = getCalculatorCode(2);
-        var code4 = getCalculatorCode(4);
+    public void findParamAddition_addParamAtStart() {
+        var code2 = getTestData("Calculator2");
+        var code4 = getTestData("Calculator4");
         var paramDiff = new ParamDiffFinder().findParamAddition(code2, code4);
         Assertions.assertEquals(1, paramDiff.size());
     }
 
     @Test
     public void findParamAddition_addTwoNewParams(){
-        Assertions.fail("not implemented");
+        var code1 = getTestData("Calculator1");
+        var code5 = getTestData("Calculator5");
+        var paramDiff = new ParamDiffFinder().findParamAddition(code1, code5);
+        Assertions.assertEquals(1, paramDiff.size());
     }
 
-    private String getCalculatorCode(int suffix) {
-        var filePath = new File("src/test/resources/test_data/Calculator" + suffix + ".java").getAbsolutePath();
+    private String getTestData(String fileName) {
+        var filePath = new File("src/test/resources/test_data/" + fileName + ".java").getAbsolutePath();
         try {
             String code = Files.readString(Paths.get(filePath));
             return code;
