@@ -56,6 +56,31 @@ public class ParamDiffFinderTest {
         Assertions.assertEquals(1, paramDiff.size());
     }
 
+    @Test
+    public void findParamAddition_2methods(){
+        var code1 = getTestData("MultiMethod1");
+        var code2 = getTestData("MultiMethod2");
+        var paramDiff = new ParamDiffFinder().findParamAddition(code1, code2);
+        Assertions.assertEquals(2, paramDiff.size());
+    }
+
+    @Test
+    public void findParamAddition_oneInOldTwoInNew(){
+        var code1 = getTestData("Calculator1");
+        var code2 = getTestData("MultiMethod2");
+        var paramDiff = new ParamDiffFinder().findParamAddition(code1, code2);
+        Assertions.assertEquals(1, paramDiff.size());
+    }
+
+    @Test
+    public void findParamAddition_oneOfTwoMethodsChange(){
+        var oldCode = getTestData("MultiMethod1");
+        var newCode = getTestData("MultiMethod3");
+        var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(1, paramDiff.size());
+        Assertions.assertEquals("add", paramDiff.get(0).oldMethod.getNameAsString());
+    }
+
     private String getTestData(String fileName) {
         var filePath = new File("src/test/resources/test_data/" + fileName + ".java").getAbsolutePath();
         try {
