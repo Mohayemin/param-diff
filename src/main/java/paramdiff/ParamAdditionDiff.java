@@ -1,15 +1,14 @@
 package paramdiff;
 
-public class ParamAdditionDiff {
-    final String className;
-    final String methodName;
-    final int indexOfAddedParam;
-    final String typeOfAddedParam;
+import com.github.javaparser.ast.body.MethodDeclaration;
 
-    public ParamAdditionDiff(String className, String methodName, int indexOfAddedParam, String typeOfAddedParam) {
-        this.className = className;
-        this.methodName = methodName;
-        this.indexOfAddedParam = indexOfAddedParam;
-        this.typeOfAddedParam = typeOfAddedParam;
+public class ParamAdditionDiff {
+    final MethodDeclaration oldMethod;
+    final MethodDeclaration newMethod;
+
+
+    public ParamAdditionDiff(MethodDeclaration oldMethod, MethodDeclaration newMethod) {
+        this.oldMethod = oldMethod;
+        this.newMethod = newMethod;
     }
 }
