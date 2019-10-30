@@ -8,18 +8,22 @@ import java.io.IOException;
 
 public class Program {
     public static void main(String[] args) throws IOException {
-        var csvPath = "src/main/resources/out/spring-analysis.csv";
+        var repoName = args[0];
+        var dataDirectory = args[1];
+
+        var csvPath = dataDirectory + "/" + repoName + ".csv";
         var csvWriter = new FileWriter(csvPath);
         var diffWriter = new DiffCsvWriter(csvWriter);
         try {
-            findDiffsForLocalRepo("src/main/resources/git_repo/spring-analysis", diffWriter, new NanoLogger());
+            findDiffsForLocalRepo(dataDirectory + "/" + repoName, diffWriter, new NanoLogger());
         } finally {
             csvWriter.flush();
             csvWriter.close();
         }
     }
 
-    private static void findDiffsForLocalRepo(String repositoryPath, DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
+    private static void findDiffsForLocalRepo(String repositoryPath,
+                                              DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
         logger.start();
         diffWriter.writeHeader();
         var gitReader = new GitReader(repositoryPath);
