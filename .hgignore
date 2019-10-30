@@ -3,3 +3,4 @@ target
 .idea/
 src/test/resources/git_repo/
 src/main/resources/log/
+src/main/resources/git_repo/
