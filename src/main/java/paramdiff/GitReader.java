@@ -3,6 +3,7 @@ package paramdiff;
 import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GitReader {
     final String repositoryPath;
@@ -22,6 +23,13 @@ public class GitReader {
         var output = runCommand(command);
         var filePaths = readLines(output);
         return filePaths;
+    }
+
+    public String readFile(String hash, String filePath) throws IOException {
+        var command = String.format("git show \"%s:%s\"", hash, filePath);
+        var output = runCommand(command);
+        var content = String.join("\n", readLines(output));
+        return content;
     }
 
     private List<String> readLines(InputStream output) {

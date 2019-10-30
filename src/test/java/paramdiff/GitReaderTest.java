@@ -21,4 +21,12 @@ public class GitReaderTest {
         Assertions.assertEquals(5, filePaths.size());
         Assertions.assertTrue(filePaths.contains("src/main/java/org/mockito/internal/configuration/SpyAnnotationEngine.java"));
     }
+
+    @Test
+    public void readFile() throws IOException {
+        var gitReader = new GitReader("src/test/resources/git_repo/mockito");
+        var fileContent = gitReader.readFile("dfc08acdbfbbf979064af4a84c39f1b64df3239a",
+                "src/main/java/org/mockito/internal/configuration/SpyAnnotationEngine.java");
+        Assertions.assertTrue(fileContent.contains("class SpyAnnotationEngine implements AnnotationEngine"));
+    }
 }
