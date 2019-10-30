@@ -15,7 +15,7 @@ public class DiffCsvWriter {
     }
 
     public void writeDiff(String hash, String filePath, ParamAdditionDiff diff) throws IOException {
-        writer.write(String.format("%s,%s,%s,%s\n", hash, filePath,
+        writer.write(String.format("%s,%s,\"%s\",\"%s\"\n", hash, filePath,
                 diff.oldMethod.getSignature().asString(),
                 diff.newMethod.getSignature().asString()));
     }
