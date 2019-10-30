@@ -2,3 +2,4 @@ syntax: glob
 target
 .idea/
 src/test/resources/git_repo/
+src/main/resources/log/
