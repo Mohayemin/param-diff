@@ -6,6 +6,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.type.Type;
+import util.Sequences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class ParamDiffFinder {
         }
     }
 
-    private List<ParamAdditionDiff> findParamAddition(CompilationUnit oldCode, CompilationUnit newCode){
+    private List<ParamAdditionDiff> findParamAddition(CompilationUnit oldCode, CompilationUnit newCode) {
         var oldTypes = oldCode.getTypes();
         var newTypes = newCode.getTypes();
         var diffs = new ArrayList<ParamAdditionDiff>();
@@ -54,7 +56,7 @@ public class ParamDiffFinder {
         for (var oldMethod : paramModifiedMethods) {
             var addedParams = newMethods.stream()
                     .filter(m -> m.getNameAsString().equals(oldMethod.getNameAsString()))
-                    .filter(m -> m.getParameters().size() > oldMethod.getParameters().size())
+                    .filter(m -> isParamSuperSet(m, oldMethod))
                     .collect(Collectors.toList());
             if (addedParams.size() == 0)
                 continue;
@@ -63,6 +65,19 @@ public class ParamDiffFinder {
         }
 
         return diffs;
+    }
+
+    private boolean isParamSuperSet(MethodDeclaration sup, MethodDeclaration sub) {
+        var supParams = getParamTypes(sup);
+        var subParams = getParamTypes(sub);
+        if (supParams.size() == subParams.size())
+            return false;
+
+        return Sequences.containsNonContinuous(getParamTypes(sup), getParamTypes(sub));
+    }
+
+    private List<Type> getParamTypes(MethodDeclaration sup) {
+        return sup.getParameters().stream().map(p -> p.getType()).collect(Collectors.toList());
     }
 
     private MethodDeclaration findMatchingMethod(TypeDeclaration type, MethodDeclaration method) {
