@@ -19,7 +19,8 @@ public class ParamDiffFinder {
         var diffs = new ArrayList<ParamAdditionDiff>();
         for (var oldType : oldTypes) {
             var newType = findMatchingClass(newTypes, oldType);
-            diffs.addAll(findParamAdditions(oldType, newType));
+            if (newType != null)
+                diffs.addAll(findParamAdditions(oldType, newType));
         }
 
         return diffs;
@@ -30,7 +31,7 @@ public class ParamDiffFinder {
             return List.of();
 
         var paramModifiedMethods = new ArrayList<MethodDeclaration>();
-        List<MethodDeclaration> newMethods = newType.getMethods();
+        List<MethodDeclaration> newMethods = new ArrayList<>(newType.getMethods());
         for (var oldMethod : oldType.getMethods()) {
             var newMethod = findMatchingMethod(newType, oldMethod);
             if (newMethod != null) {
@@ -44,11 +45,12 @@ public class ParamDiffFinder {
         for (var oldMethod : paramModifiedMethods) {
             var addedParams = newMethods.stream()
                     .filter(m -> m.getNameAsString().equals(oldMethod.getNameAsString()))
-                    .filter(m -> m.getParameters().size() > oldMethod.getParameters().size());
-            if (addedParams.count() == 0)
+                    .filter(m -> m.getParameters().size() > oldMethod.getParameters().size())
+                    .collect(Collectors.toList());
+            if (addedParams.size() == 0)
                 continue;
 
-            diffs.add(new ParamAdditionDiff(oldMethod, newMethods.get(0)));
+            diffs.add(new ParamAdditionDiff(oldMethod, addedParams.get(0)));
         }
 
         return diffs;
@@ -67,7 +69,12 @@ public class ParamDiffFinder {
     }
 
     private TypeDeclaration findMatchingClass(NodeList<TypeDeclaration<?>> typeList, TypeDeclaration typeToFind) {
-        return typeList.stream()
-                .filter(nt -> nt.getFullyQualifiedName().equals(typeToFind.getFullyQualifiedName())).findFirst().get();
+        var typesWithName = typeList.stream()
+                .filter(nt -> nt.getFullyQualifiedName().equals(typeToFind.getFullyQualifiedName()))
+                .collect(Collectors.toList());
+        if (typesWithName.size() > 0){
+            return typesWithName.get(0);
+        }
+        return null;
     }
 }

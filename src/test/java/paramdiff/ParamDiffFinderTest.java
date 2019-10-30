@@ -81,6 +81,22 @@ public class ParamDiffFinderTest {
         Assertions.assertEquals("add", paramDiff.get(0).oldMethod.getNameAsString());
     }
 
+    @Test
+    public void findParamAddition_newMethodAdded_noDiff(){
+        var oldCode = getTestData("MultiMethod1");
+        var newCode = getTestData("MultiMethod_NewMethodAdded");
+        var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(0, paramDiff.size());
+    }
+
+    @Test
+    public void findParamAddition_noSuchClass_noChange(){
+        var oldCode = getTestData("MultiMethod1");
+        var newCode = getTestData("NoClass");
+        var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(0, paramDiff.size());
+    }
+
     private String getTestData(String fileName) {
         var filePath = new File("src/test/resources/test_data/" + fileName + ".java").getAbsolutePath();
         try {
