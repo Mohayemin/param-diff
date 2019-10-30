@@ -17,7 +17,7 @@ public class GitReaderTest {
     @Test
     public void getChangedFiles() throws IOException {
         var gitReader = new GitReader("src/test/resources/git_repo/mockito");
-        var filePaths = gitReader.getChangedFiles("dfc08acdbfbbf979064af4a84c39f1b64df3239a");
+        var filePaths = gitReader.getChangedJavaFiles("dfc08acdbfbbf979064af4a84c39f1b64df3239a");
         Assertions.assertEquals(5, filePaths.size());
         Assertions.assertTrue(filePaths.contains("src/main/java/org/mockito/internal/configuration/SpyAnnotationEngine.java"));
     }

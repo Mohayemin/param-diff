@@ -3,7 +3,6 @@ package paramdiff;
 import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GitReader {
     final String repositoryPath;
@@ -18,10 +17,10 @@ public class GitReader {
         return hashes;
     }
 
-    public List<String> getChangedFiles(String hash) throws IOException {
+    public List<String> getChangedJavaFiles(String hash) throws IOException {
         var command = "git diff \"" + hash + "^!\" --name-only";
         var output = runCommand(command);
-        var filePaths = readLines(output);
+        var filePaths = readLines(output).stream().filter(fp->fp.endsWith(".java")).collect(Collectors.toList());
         return filePaths;
     }
 
