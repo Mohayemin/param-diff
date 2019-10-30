@@ -97,6 +97,14 @@ public class ParamDiffFinderTest {
         Assertions.assertEquals(0, paramDiff.size());
     }
 
+    @Test
+    public void findParamAddition_errorInFile_noChange(){
+        var oldCode = getTestData("ErrorInFile");
+        var newCode = getTestData("MultiMethod1");
+        var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(0, paramDiff.size());
+    }
+
     private String getTestData(String fileName) {
         var filePath = new File("src/test/resources/test_data/" + fileName + ".java").getAbsolutePath();
         try {

@@ -1,6 +1,8 @@
 package paramdiff;
 
+import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -11,9 +13,16 @@ import java.util.stream.Collectors;
 
 public class ParamDiffFinder {
     public List<ParamAdditionDiff> findParamAddition(String oldCodeText, String newCodeText) {
-        var oldCode = StaticJavaParser.parse(oldCodeText);
-        var newCode = StaticJavaParser.parse(newCodeText);
+        try {
+            var oldCode = StaticJavaParser.parse(oldCodeText);
+            var newCode = StaticJavaParser.parse(newCodeText);
+            return findParamAddition(oldCode, newCode);
+        } catch (ParseProblemException e) {
+            return new ArrayList<>();
+        }
+    }
 
+    private List<ParamAdditionDiff> findParamAddition(CompilationUnit oldCode, CompilationUnit newCode){
         var oldTypes = oldCode.getTypes();
         var newTypes = newCode.getTypes();
         var diffs = new ArrayList<ParamAdditionDiff>();
@@ -72,7 +81,7 @@ public class ParamDiffFinder {
         var typesWithName = typeList.stream()
                 .filter(nt -> nt.getFullyQualifiedName().equals(typeToFind.getFullyQualifiedName()))
                 .collect(Collectors.toList());
-        if (typesWithName.size() > 0){
+        if (typesWithName.size() > 0) {
             return typesWithName.get(0);
         }
         return null;
