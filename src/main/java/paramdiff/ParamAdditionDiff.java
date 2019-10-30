@@ -11,4 +11,9 @@ public class ParamAdditionDiff {
         this.oldMethod = oldMethod;
         this.newMethod = newMethod;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s->%s",oldMethod.getSignature().asString(),newMethod.getSignature().asString());
+    }
 }
