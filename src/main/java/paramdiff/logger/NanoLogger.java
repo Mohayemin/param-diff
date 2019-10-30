@@ -14,12 +14,17 @@ public class NanoLogger implements TimeLogger{
 
     public void logLap(String message) {
         var lapEndTime = System.nanoTime();
-        System.out.printf("%s: %s\n ns", message, lapEndTime - lapStartTime);
+        System.out.printf("%s: %s\n", message, formatDuration(lapEndTime - lapStartTime));
     }
 
     public void logTotal(String message){
         var endTime = System.nanoTime();
-        System.out.printf("%s: %s\n ns", message, endTime - startTime);
+        System.out.printf("%s: %s\n", message, formatDuration(endTime - startTime));
+    }
+
+    private String formatDuration(long nanoSeconds){
+        var seconds = nanoSeconds / 1e9;
+        return String.format("%ss", seconds);
     }
 }
 
