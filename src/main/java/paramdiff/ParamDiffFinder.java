@@ -87,7 +87,7 @@ public class ParamDiffFinder {
 
     private MethodDeclaration findMatchingMethod(TypeDeclaration type, MethodDeclaration method) {
         var params = method.getParameters().stream()
-                .map(parameter -> parameter.getNameAsString())
+                .map(parameter -> parameter.getType().asString())
                 .collect(Collectors.toList()).toArray(new String[0]);
         List<MethodDeclaration> matchingMethodList = type.getMethodsBySignature(method.getNameAsString(), params);
 

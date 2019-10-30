@@ -105,6 +105,14 @@ public class ParamDiffFinderTest {
         Assertions.assertEquals(0, paramDiff.size());
     }
 
+    @Test
+    public void findParam_realData_noChange(){
+        var oldCode = getTestData("v_old");
+        var newCode = getTestData("v_new");
+        var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(0, paramDiff.size());
+    }
+
     private String getTestData(String fileName) {
         var filePath = new File("src/test/resources/test_data/" + fileName + ".java").getAbsolutePath();
         try {
