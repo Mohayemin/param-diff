@@ -10,12 +10,19 @@ public class Program {
     public static void main(String[] args) throws IOException {
         var repoName = args[0];
         var dataDirectory = args[1];
+        var repoPath = dataDirectory + "/" + repoName;
 
         var csvPath = dataDirectory + "/" + repoName + ".csv";
         var csvWriter = new FileWriter(csvPath);
         var diffWriter = new DiffCsvWriter(csvWriter);
         try {
-            findDiffsForLocalRepo(dataDirectory + "/" + repoName, diffWriter, new NanoLogger());
+            if (args.length > 2) {
+                var gitUrl = args[2];
+                new GitCloner(gitUrl, repoPath).cloneRepo();
+            }
+            findDiffsForLocalRepo(repoPath, diffWriter, new NanoLogger());
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             csvWriter.flush();
             csvWriter.close();
