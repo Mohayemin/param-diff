@@ -3,22 +3,30 @@ package paramdiff;
 import paramdiff.logger.NanoLogger;
 import paramdiff.logger.TimeLogger;
 
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Program {
     public static void main(String[] args) throws IOException {
+        var csvPath = "src/main/resources/out/spring-analysis.csv";
+        var csvWriter = new FileWriter(csvPath);
+        var diffWriter = new DiffCsvWriter(csvWriter);
         try {
-            findDiffsForLocalRepo("src/main/resources/git_repo/spring-analysis", new NanoLogger());
+            findDiffsForLocalRepo("src/main/resources/git_repo/spring-analysis", diffWriter, new NanoLogger());
         } finally {
+            csvWriter.flush();
+            csvWriter.close();
         }
     }
 
-    private static void findDiffsForLocalRepo(String repositoryPath, TimeLogger logger) throws IOException {
+    private static void findDiffsForLocalRepo(String repositoryPath, DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
         logger.start();
+        diffWriter.writeHeader();
         var gitReader = new GitReader(repositoryPath);
         var hashes = gitReader.getAllHashes();
 
-        for (var hash : hashes) {
+        for (int i = 0; i < hashes.size(); i++) {
+            var hash = hashes.get(i);
             logger.startLap();
             var changedFilePaths = gitReader.getChangedJavaFiles(hash);
             int changeCount = 0;
@@ -29,16 +37,15 @@ public class Program {
 
                 var paramDiffFinder = new ParamDiffFinder();
 
-                var changes = paramDiffFinder.findParamAddition(oldFileContent, newFileContent);
-                changeCount += changes.size();
+                var diffs = paramDiffFinder.findParamAddition(oldFileContent, newFileContent);
+                changeCount += diffs.size();
 
-                for (var change : changes) {
-                    System.out.println(change);
+                for (var diff : diffs) {
+                    diffWriter.writeDiff(hash, changedFilePath, diff);
                 }
             }
 
-            if (changeCount > 0)
-                logger.logLap(hash + ":" + changeCount);
+            logger.logLap(String.format("%4d:%s:%3d", i, hash, changeCount));
         }
     }
 }
