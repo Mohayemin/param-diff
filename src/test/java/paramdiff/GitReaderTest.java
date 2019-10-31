@@ -2,6 +2,7 @@ package paramdiff;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import paramdiff.git.GitReader;
 
 import java.io.IOException;
 

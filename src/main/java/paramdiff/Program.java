@@ -1,5 +1,7 @@
 package paramdiff;
 
+import paramdiff.git.GitCloner;
+import paramdiff.git.GitReader;
 import paramdiff.logger.NanoLogger;
 import paramdiff.logger.TimeLogger;
 

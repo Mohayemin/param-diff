@@ -1,4 +1,4 @@
-package paramdiff;
+package paramdiff.git;
 
 import java.io.*;
 import java.util.List;
