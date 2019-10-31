@@ -11,12 +11,14 @@ public class GitReaderTest {
 
     private String repositoryPath = "../ParamDiffData/mockito";
 
+    /*
     @Test
     public void readAllHash() throws IOException {
         var gitReader = new GitReader(repositoryPath);
         var hashes = gitReader.getAllHashes();
         Assertions.assertEquals(5163, hashes.size());
     }
+    */
 
     @Test
     public void getChangedFiles() throws IOException {
