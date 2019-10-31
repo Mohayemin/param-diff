@@ -8,6 +8,7 @@ import paramdiff.logger.TimeLogger;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Program {
@@ -58,12 +59,7 @@ public class Program {
             filesProcessed += changedFilePaths.size();
 
             for (var changedFilePath : changedFilePaths) {
-                var newFileContent = revision.readFile(changedFilePath);
-                var parentFileContent = parentRevision.readFile(changedFilePath);
-
-                var paramDiffFinder = new ParamDiffFinder();
-
-                var diffs = paramDiffFinder.findParamAddition(parentFileContent, newFileContent);
+                var diffs = findDiffsInFile(revision, parentRevision, changedFilePath);
                 totalDiffsFound += diffs.size();
 
                 for (var diff : diffs) {
@@ -71,7 +67,7 @@ public class Program {
                 }
             }
 
-            if (totalCompleted % 100 == 0){
+            if (totalCompleted % 100 == 0) {
                 var message = String.format("%5d/%d revisions, %4d merges skipped, %6d files processed, %5d target changes found",
                         totalCompleted, revisions.size(), skippedMerge, filesProcessed, totalDiffsFound);
                 logger.logLap(message);
@@ -82,5 +78,18 @@ public class Program {
                 totalCompleted, revisions.size(), skippedMerge, filesProcessed, totalDiffsFound);
 
         logger.logTotal("Complete:" + message);
+    }
+
+    private static List<ParamAdditionDiff> findDiffsInFile(Revision revision, Revision parentRevision, String changedFilePath)
+            throws IOException {
+        var newFileContent = revision.readFile(changedFilePath);
+        var parentFileContent = parentRevision.readFile(changedFilePath);
+
+        var paramDiffFinder = new ParamDiffFinder();
+
+        var diffs = paramDiffFinder.findParamAddition(parentFileContent, newFileContent);
+
+        return diffs;
+
     }
 }
