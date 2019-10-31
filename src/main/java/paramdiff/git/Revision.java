@@ -16,12 +16,10 @@ public class Revision {
     }
 
     public List<String> getChangedJavaFiles() throws IOException {
-        var commandText = String.format("git diff \"%s^!\" --name-only", hash);
+        var commandText = String.format("git diff \"%s^!\" --name-only --diff-filter=M -- \"*.java\"", hash);
         var filePaths = new Command(commandText)
                 .run(repository.localFile)
-                .readLines().stream()
-                .filter(fp -> fp.endsWith(".java"))
-                .collect(Collectors.toList());
+                .readLines();
 
         return filePaths;
     }
