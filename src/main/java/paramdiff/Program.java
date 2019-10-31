@@ -1,6 +1,6 @@
 package paramdiff;
 
-import paramdiff.git.GitCloner;
+import paramdiff.git.Repository;
 import paramdiff.git.GitReader;
 import paramdiff.logger.NanoLogger;
 import paramdiff.logger.TimeLogger;
@@ -20,7 +20,7 @@ public class Program {
         try {
             if (args.length > 2) {
                 var gitUrl = args[2];
-                new GitCloner(gitUrl, repoPath).cloneRepo();
+                new Repository(gitUrl, repoPath).update();
             }
             findDiffsForLocalRepo(repoPath, diffWriter, new NanoLogger());
         } catch (Exception e) {
