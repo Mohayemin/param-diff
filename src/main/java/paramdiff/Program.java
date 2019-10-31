@@ -40,18 +40,22 @@ public class Program {
         diffWriter.writeHeader();
         var revisions = repository.getAllRevisions().collect(Collectors.toList());
 
-        var count = 0;
+        var totalCompleted = 0;
+        var skippedMerge = 0;
+        var filesProcessed = 0;
+        var totalDiffsFound = 0;
+
+        logger.startLap();
         for (var revision : revisions) {
-            logger.startLap();
-            count++;
+            totalCompleted++;
             if (revision.isMerge()) {
-                logger.logLap(String.format("%5d,%s,%d", count, revision.hash, -1));
+                skippedMerge++;
                 continue;
             }
 
             var parentRevision = revision.getParent();
             var changedFilePaths = revision.getChangedJavaFiles();
-            int changeCount = 0;
+            filesProcessed += changedFilePaths.size();
 
             for (var changedFilePath : changedFilePaths) {
                 var newFileContent = revision.readFile(changedFilePath);
@@ -60,16 +64,23 @@ public class Program {
                 var paramDiffFinder = new ParamDiffFinder();
 
                 var diffs = paramDiffFinder.findParamAddition(parentFileContent, newFileContent);
-                changeCount += diffs.size();
+                totalDiffsFound += diffs.size();
 
                 for (var diff : diffs) {
                     diffWriter.writeDiff(revision.hash, changedFilePath, diff);
                 }
             }
 
-            logger.logLap(String.format("%5d,%s,%d", count, revision.hash, changeCount));
+            if (totalCompleted % 100 == 0){
+                var message = String.format("%5d/%d revisions, %4d merges skipped, %6d files processed, %5d target changes found",
+                        totalCompleted, revisions.size(), skippedMerge, filesProcessed, totalDiffsFound);
+                logger.logLap(message);
+            }
         }
 
-        logger.logTotal("Complete");
+        var message = String.format("%5d/%d revisions, %4d merges skipped, %6d files processed, %5d target changes found",
+                totalCompleted, revisions.size(), skippedMerge, filesProcessed, totalDiffsFound);
+
+        logger.logTotal("Complete:" + message);
     }
 }
