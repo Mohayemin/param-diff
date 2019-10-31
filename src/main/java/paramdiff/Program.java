@@ -1,7 +1,7 @@
 package paramdiff;
 
 import paramdiff.git.Repository;
-import paramdiff.git.GitReader;
+import paramdiff.git.Revision;
 import paramdiff.logger.NanoLogger;
 import paramdiff.logger.TimeLogger;
 
@@ -36,7 +36,7 @@ public class Program {
                                               DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
         logger.start();
         diffWriter.writeHeader();
-        var gitReader = new GitReader(repository.localFile);
+        var gitReader = new Revision(repository.localFile);
         var hashes = repository.getAllHashes();
 
         for (int i = 0; i < hashes.size(); i++) {

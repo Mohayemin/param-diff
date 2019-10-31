@@ -6,10 +6,10 @@ import java.io.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GitReader {
+public class Revision {
     final File repositoryFile;
 
-    public GitReader(File repositoryFile) {
+    public Revision(File repositoryFile) {
         this.repositoryFile = repositoryFile;
     }
 
