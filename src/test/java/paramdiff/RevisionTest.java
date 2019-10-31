@@ -2,6 +2,7 @@ package paramdiff;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import paramdiff.git.Repository;
 import paramdiff.git.Revision;
 
 import java.io.File;
@@ -23,17 +24,18 @@ public class RevisionTest {
 
     @Test
     public void getChangedFiles() throws IOException {
-        var gitReader = new Revision(repoFile);
-        var filePaths = gitReader.getChangedJavaFiles("dfc08acdbfbbf979064af4a84c39f1b64df3239a");
+        var repository = new Repository("", repoFile);
+        var revision = new Revision(repository, "dfc08acdbfbbf979064af4a84c39f1b64df3239a");
+        var filePaths = revision.getChangedJavaFiles();
         Assertions.assertEquals(5, filePaths.size());
         Assertions.assertTrue(filePaths.contains("src/main/java/org/mockito/internal/configuration/SpyAnnotationEngine.java"));
     }
 
     @Test
     public void readFile() throws IOException {
-        var gitReader = new Revision(repoFile);
-        var fileContent = gitReader.readFile("dfc08acdbfbbf979064af4a84c39f1b64df3239a",
-                "src/main/java/org/mockito/internal/configuration/SpyAnnotationEngine.java");
+        var repository = new Repository("", repoFile);
+        var revision = new Revision(repository, "dfc08acdbfbbf979064af4a84c39f1b64df3239a");
+        var fileContent = revision.readFile("src/main/java/org/mockito/internal/configuration/SpyAnnotationEngine.java");
         Assertions.assertTrue(fileContent.contains("class SpyAnnotationEngine implements AnnotationEngine"));
     }
 }

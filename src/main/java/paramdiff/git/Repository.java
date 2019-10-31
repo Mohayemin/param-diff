@@ -4,16 +4,15 @@ import util.Command;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 public class Repository {
     public final String remoteUrl;
     public final File localFile;
 
-    public Repository(String remoteUrl, String localPath) {
+    public Repository(String remoteUrl, File localFile) {
         this.remoteUrl = remoteUrl;
-        this.localFile = Path.of(localPath).toFile();
+        this.localFile = localFile;
     }
 
     public Repository update() throws IOException {

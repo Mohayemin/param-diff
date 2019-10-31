@@ -7,16 +7,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Revision {
-    final File repositoryFile;
+    private Repository repository;
+    private String hash;
 
-    public Revision(File repositoryFile) {
-        this.repositoryFile = repositoryFile;
+    public Revision(Repository repository, String hash) {
+        this.repository = repository;
+        this.hash = hash;
     }
 
-    public List<String> getChangedJavaFiles(String hash) throws IOException {
-        var commandText = "git diff \"" + hash + "^!\" --name-only";
+    public List<String> getChangedJavaFiles() throws IOException {
+        var commandText = String.format("git diff \"%s^!\" --name-only", hash);
         var filePaths = new Command(commandText)
-                .run(repositoryFile)
+                .run(repository.localFile)
                 .readLines().stream()
                 .filter(fp->fp.endsWith(".java"))
                 .collect(Collectors.toList());
@@ -24,9 +26,12 @@ public class Revision {
         return filePaths;
     }
 
-    public String readFile(String hash, String filePath) throws IOException {
-        var command = new Command(String.format("git show \"%s:%s\"", hash, filePath));
-        var lines = command.run(repositoryFile).readLines();
+    public String readFile(String filePath) throws IOException {
+        String commandText = String.format("git show \"%s:%s\"", hash, filePath);
+        var lines = new Command(commandText)
+                .run(repository.localFile)
+                .readLines();
+
         var content = String.join("\n", lines);
         return content;
     }

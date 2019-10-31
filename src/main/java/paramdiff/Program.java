@@ -5,6 +5,7 @@ import paramdiff.git.Revision;
 import paramdiff.logger.NanoLogger;
 import paramdiff.logger.TimeLogger;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -12,7 +13,7 @@ public class Program {
     public static void main(String[] args) throws IOException {
         var repoName = args[0];
         var dataDirectory = args[1];
-        var repoPath = dataDirectory + "/" + repoName;
+        var repoPath = new File(dataDirectory + "/" + repoName);
 
         var csvPath = dataDirectory + "/" + repoName + ".csv";
         var csvWriter = new FileWriter(csvPath);
@@ -36,22 +37,23 @@ public class Program {
                                               DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
         logger.start();
         diffWriter.writeHeader();
-        var gitReader = new Revision(repository.localFile);
         var hashes = repository.getAllHashes();
 
         for (int i = 0; i < hashes.size(); i++) {
             var hash = hashes.get(i);
             logger.startLap();
-            var changedFilePaths = gitReader.getChangedJavaFiles(hash);
+            var revision = new Revision(repository, hash);
+            var parentRevision = new Revision(repository, hash + "^");
+            var changedFilePaths = revision.getChangedJavaFiles();
             int changeCount = 0;
 
             for (var changedFilePath : changedFilePaths) {
-                var newFileContent = gitReader.readFile(hash, changedFilePath);
-                var oldFileContent = gitReader.readFile(hash + "^", changedFilePath);
+                var newFileContent = revision.readFile(changedFilePath);
+                var parentFileContent = parentRevision.readFile(changedFilePath);
 
                 var paramDiffFinder = new ParamDiffFinder();
 
-                var diffs = paramDiffFinder.findParamAddition(oldFileContent, newFileContent);
+                var diffs = paramDiffFinder.findParamAddition(parentFileContent, newFileContent);
                 changeCount += diffs.size();
 
                 for (var diff : diffs) {
