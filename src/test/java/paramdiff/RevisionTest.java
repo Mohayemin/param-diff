@@ -17,7 +17,7 @@ public class RevisionTest {
     @Test
     public void readAllHash() throws IOException {
         var gitReader = new Revision(repositoryPath);
-        var hashes = gitReader.getAllHashes();
+        var hashes = gitReader.getAllRevisions();
         Assertions.assertEquals(5163, hashes.size());
     }
     */

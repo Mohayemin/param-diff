@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Revision {
     private Repository repository;
-    private String hash;
+    public final String hash;
 
     public Revision(Repository repository, String hash) {
         this.repository = repository;
@@ -40,7 +40,10 @@ public class Revision {
         // this command shows parents revisions of a revision, separated by space
         var commandText = String.format("git log --pretty=%%P -n 1 \"%s\"", hash);
         var output = new Command(commandText).run(repository.localFile).readLines().get(0);
-        System.out.println(output);
         return output.contains(" ");
+    }
+
+    public Revision getParent(){
+        return new Revision(repository,hash + "^");
     }
 }

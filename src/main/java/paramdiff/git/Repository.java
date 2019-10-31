@@ -4,7 +4,7 @@ import util.Command;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.stream.Stream;
 
 public class Repository {
     public final String remoteUrl;
@@ -27,10 +27,12 @@ public class Repository {
         return this;
     }
 
-    public List<String> getAllHashes() throws IOException {
-        var hashes = new Command("git log --pretty=format:\"%H\"")
+    public Stream<Revision> getAllRevisions() throws IOException {
+        var revisions = new Command("git log --pretty=format:\"%H\"")
                 .run(localFile)
-                .readLines();
-        return hashes;
+                .readLines()
+                .stream()
+                .map(h -> new Revision(this, h));
+        return revisions;
     }
 }

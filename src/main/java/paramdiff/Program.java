@@ -8,6 +8,7 @@ import paramdiff.logger.TimeLogger;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class Program {
     public static void main(String[] args) throws IOException {
@@ -15,7 +16,7 @@ public class Program {
         var dataDirectory = args[1];
         var repoPath = new File(dataDirectory + "/" + repoName);
 
-        var csvPath = dataDirectory + "/" + repoName + ".csv";
+        var csvPath = String.format("%s/%s_%d.csv", dataDirectory, repoName, System.currentTimeMillis());
         var csvWriter = new FileWriter(csvPath);
         var diffWriter = new DiffCsvWriter(csvWriter);
         try {
@@ -37,13 +38,18 @@ public class Program {
                                               DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
         logger.start();
         diffWriter.writeHeader();
-        var hashes = repository.getAllHashes();
+        var revisions = repository.getAllRevisions().collect(Collectors.toList());
 
-        for (int i = 0; i < hashes.size(); i++) {
-            var hash = hashes.get(i);
+        var count = 0;
+        for (var revision : revisions) {
             logger.startLap();
-            var revision = new Revision(repository, hash);
-            var parentRevision = new Revision(repository, hash + "^");
+            count++;
+            if (revision.isMerge()) {
+                logger.logLap(String.format("%5d,%s,%d", count, revision.hash, -1));
+                continue;
+            }
+
+            var parentRevision = revision.getParent();
             var changedFilePaths = revision.getChangedJavaFiles();
             int changeCount = 0;
 
@@ -57,11 +63,11 @@ public class Program {
                 changeCount += diffs.size();
 
                 for (var diff : diffs) {
-                    diffWriter.writeDiff(hash, changedFilePath, diff);
+                    diffWriter.writeDiff(revision.hash, changedFilePath, diff);
                 }
             }
 
-            logger.logLap(String.format("%4d:%s:%3d", i, hash, changeCount));
+            logger.logLap(String.format("%5d,%s,%d", count, revision.hash, changeCount));
         }
 
         logger.logTotal("Complete");
