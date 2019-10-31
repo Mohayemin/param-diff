@@ -20,7 +20,7 @@ public class Revision {
         var filePaths = new Command(commandText)
                 .run(repository.localFile)
                 .readLines().stream()
-                .filter(fp->fp.endsWith(".java"))
+                .filter(fp -> fp.endsWith(".java"))
                 .collect(Collectors.toList());
 
         return filePaths;
@@ -34,5 +34,13 @@ public class Revision {
 
         var content = String.join("\n", lines);
         return content;
+    }
+
+    public boolean isMerge() throws IOException {
+        // this command shows parents revisions of a revision, separated by space
+        var commandText = String.format("git log --pretty=%%P -n 1 \"%s\"", hash);
+        var output = new Command(commandText).run(repository.localFile).readLines().get(0);
+        System.out.println(output);
+        return output.contains(" ");
     }
 }
