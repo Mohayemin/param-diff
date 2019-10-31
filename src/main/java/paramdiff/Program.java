@@ -2,8 +2,7 @@ package paramdiff;
 
 import paramdiff.git.Repository;
 import paramdiff.git.Revision;
-import paramdiff.logger.NanoLogger;
-import paramdiff.logger.TimeLogger;
+import util.Stopwatch;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +25,7 @@ public class Program {
                 gitUrl = args[2];
             }
             var repository = new Repository(gitUrl, repoPath).update();
-            findDiffsForLocalRepo(repository, diffWriter, new NanoLogger());
+            findDiffsForLocalRepo(repository, diffWriter);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -36,17 +35,19 @@ public class Program {
     }
 
     private static void findDiffsForLocalRepo(Repository repository,
-                                              DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
-        logger.start();
+                                              DiffCsvWriter diffWriter) throws IOException {
+        System.out.printf("Started processing repository at %s\n", repository.localFile.getAbsolutePath());
+
+        var stopwatch = new Stopwatch().start();;
         diffWriter.writeHeader();
         var revisions = repository.getAllRevisions().collect(Collectors.toList());
 
+        var totalRevisions = revisions.size();
         var totalCompleted = 0;
         var skippedMerge = 0;
         var filesProcessed = 0;
         var totalDiffsFound = 0;
 
-        logger.startLap();
         for (var revision : revisions) {
             totalCompleted++;
             if (revision.isMerge()) {
@@ -68,16 +69,17 @@ public class Program {
             }
 
             if (totalCompleted % 100 == 0) {
-                var message = String.format("%5d/%d revisions, %4d merges skipped, %6d files processed, %5d target changes found",
-                        totalCompleted, revisions.size(), skippedMerge, filesProcessed, totalDiffsFound);
-                logger.logLap(message);
+                logUpdate(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
             }
         }
 
-        var message = String.format("%5d/%d revisions, %4d merges skipped, %6d files processed, %5d target changes found",
-                totalCompleted, revisions.size(), skippedMerge, filesProcessed, totalDiffsFound);
+        logUpdate(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
+    }
 
-        logger.logTotal("Complete:" + message);
+    private static void logUpdate(Stopwatch stopwatch, int totalRevisions, int totalCompleted, int skippedMerge, int filesProcessed, int totalDiffsFound) {
+        var message = String.format("%5d/%d revisions, %4d merges skipped, %6d files processed, %5d target changes found, %.2f seconds",
+                totalCompleted, totalRevisions, skippedMerge, filesProcessed, totalDiffsFound, stopwatch.elapsedNanos() / 1e9);
+        System.out.println(message);
     }
 
     private static List<ParamAdditionDiff> findDiffsInFile(Revision revision, Revision parentRevision, String changedFilePath)
