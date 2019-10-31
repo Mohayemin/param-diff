@@ -18,11 +18,12 @@ public class Program {
         var csvWriter = new FileWriter(csvPath);
         var diffWriter = new DiffCsvWriter(csvWriter);
         try {
+            var gitUrl = "";
             if (args.length > 2) {
-                var gitUrl = args[2];
-                new Repository(gitUrl, repoPath).update();
+                gitUrl = args[2];
             }
-            findDiffsForLocalRepo(repoPath, diffWriter, new NanoLogger());
+            var repository = new Repository(gitUrl, repoPath).update();
+            findDiffsForLocalRepo(repository, diffWriter, new NanoLogger());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -31,12 +32,12 @@ public class Program {
         }
     }
 
-    private static void findDiffsForLocalRepo(String repositoryPath,
+    private static void findDiffsForLocalRepo(Repository repository,
                                               DiffCsvWriter diffWriter, TimeLogger logger) throws IOException {
         logger.start();
         diffWriter.writeHeader();
-        var gitReader = new GitReader(repositoryPath);
-        var hashes = gitReader.getAllHashes();
+        var gitReader = new GitReader(repository.localFile);
+        var hashes = repository.getAllHashes();
 
         for (int i = 0; i < hashes.size(); i++) {
             var hash = hashes.get(i);
