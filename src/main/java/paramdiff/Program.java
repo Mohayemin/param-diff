@@ -58,5 +58,7 @@ public class Program {
 
             logger.logLap(String.format("%4d:%s:%3d", i, hash, changeCount));
         }
+
+        logger.logTotal("Complete");
     }
 }

@@ -9,7 +9,7 @@ public class NanoLogger implements TimeLogger{
     }
 
     public void startLap(){
-        lapStartTime = startTime;
+        lapStartTime = System.nanoTime();
     }
 
     public void logLap(String message) {
