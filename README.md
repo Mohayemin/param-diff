@@ -22,7 +22,7 @@ The tool has been run on the following Java git repositories
 |   | Project  | Revisions  | Processed Files | Param Addition Found |
 | --:| :-------| :------:| :-:| :-: |
 | 1 | [Mockito](https://github.com/mockito/mockito)             |  5.2K | 14.5K | 101 |
-| 2 | [RxJava](ttps://github.com/ReactiveX/RxJava)              |  5.6K | 24.9K | 104 |
+| 2 | [RxJava](https://github.com/ReactiveX/RxJava)              |  5.6K | 24.9K | 104 |
 | 3 | [Elastic Search](https://github.com/elastic/elasticsearch)| 49.0K | - |
 | 4 | [Book Keeper](https://github.com/apache/bookkeeper)       |  2.2K | 10.5K | 328 |
 | 5 | [Camel Quarkus](https://github.com/apache/camel-quarkus)  |  504 | 616 | 21 |
