@@ -1,10 +1,10 @@
 package paramdiff;
 
+import com.beust.jcommander.JCommander;
 import paramdiff.git.Repository;
 import paramdiff.git.Revision;
 import util.Stopwatch;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -12,19 +12,21 @@ import java.util.stream.Collectors;
 
 public class Program {
     public static void main(String[] args) throws IOException {
-        var repoName = args[0];
-        var dataDirectory = args[1];
-        var repoPath = new File(dataDirectory + "/" + repoName);
+        CLIParams params = new CLIParams();
+        JCommander.newBuilder()
+                .addObject(params)
+                .build()
+                .parse(args);
 
-        var csvPath = String.format("%s/%s_%d.csv", dataDirectory, repoName, System.currentTimeMillis());
+        params.init();
+        params.outDir.mkdirs();
+        System.out.println(params.asString());
+
+        var csvPath = String.format("%s/%s_%d.csv", params.outPath, params.repositoryName, System.currentTimeMillis());
         var csvWriter = new FileWriter(csvPath);
         var diffWriter = new DiffCsvWriter(csvWriter);
         try {
-            var gitUrl = "";
-            if (args.length > 2) {
-                gitUrl = args[2];
-            }
-            var repository = new Repository(gitUrl, repoPath).update();
+            var repository = new Repository(params.gitUrl, params.localRepositoryDir).update();
             findDiffsForLocalRepo(repository, diffWriter);
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,9 +38,9 @@ public class Program {
 
     private static void findDiffsForLocalRepo(Repository repository,
                                               DiffCsvWriter diffWriter) throws IOException {
-        System.out.printf("Started processing repository at %s\n", repository.localFile.getAbsolutePath());
+        System.out.println("Started processing repository");
 
-        var stopwatch = new Stopwatch().start();;
+        var stopwatch = new Stopwatch().start();
         diffWriter.writeHeader();
         var revisions = repository.getAllRevisions().collect(Collectors.toList());
 
