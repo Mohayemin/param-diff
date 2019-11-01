@@ -1,5 +1,5 @@
 # How to run
-Java 12 is needed to run the tool. Download the executable jar from here and run the following command  
+Java 12 is needed to run the tool. [Click here to download the executable jar](https://github.com/Mohayemin/param-diff/releases/download/v1.0/ParamDiff.jar) and run the following command:  
 `java -jar ParamDiff.jar "<repo-name>" "<data-dir>" "<repo-url>"`  
 * `data-dir` is the folder for repositories and output CSVs. 
 * `repo-name` is a short name of the repository.
