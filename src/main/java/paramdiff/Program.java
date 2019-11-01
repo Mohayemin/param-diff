@@ -52,6 +52,7 @@ public class Program {
             totalCompleted++;
             if (revision.isMerge()) {
                 skippedMerge++;
+                tryUpdateLog(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
                 continue;
             }
 
@@ -68,15 +69,19 @@ public class Program {
                 }
             }
 
-            if (totalCompleted % 100 == 0) {
-                logUpdate(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
-            }
+            tryUpdateLog(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
         }
 
-        logUpdate(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
+        updateLog(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
     }
 
-    private static void logUpdate(Stopwatch stopwatch, int totalRevisions, int totalCompleted, int skippedMerge, int filesProcessed, int totalDiffsFound) {
+    private static void tryUpdateLog(Stopwatch stopwatch, int totalRevisions, int totalCompleted, int skippedMerge, int filesProcessed, int totalDiffsFound) {
+        if (totalCompleted % 100 == 0) {
+            updateLog(stopwatch, totalRevisions, totalCompleted, skippedMerge, filesProcessed, totalDiffsFound);
+        }
+    }
+
+    private static void updateLog(Stopwatch stopwatch, int totalRevisions, int totalCompleted, int skippedMerge, int filesProcessed, int totalDiffsFound) {
         var message = String.format("%5d/%d revisions, %4d merges skipped, %6d files processed, %5d target changes found, %.2f seconds",
                 totalCompleted, totalRevisions, skippedMerge, filesProcessed, totalDiffsFound, stopwatch.elapsedNanos() / 1e9);
         System.out.println(message);

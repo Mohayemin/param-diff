@@ -5,9 +5,11 @@ import java.io.IOException;
 
 public class DiffCsvWriter {
     private FileWriter writer;
+    private int rowsCount;
 
     public DiffCsvWriter(FileWriter writer) {
         this.writer = writer;
+        rowsCount = 0;
     }
 
     public void writeHeader() throws IOException {
@@ -18,5 +20,11 @@ public class DiffCsvWriter {
         writer.write(String.format("%s,%s,\"%s\",\"%s\"\n", hash, filePath,
                 diff.oldMethod.getSignature().asString(),
                 diff.newMethod.getSignature().asString()));
+        rowsCount++;
+
+        if (rowsCount%5 == 0){
+            this.writer.flush();
+            this.writer.flush();
+        }
     }
 }

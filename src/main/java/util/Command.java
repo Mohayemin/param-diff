@@ -18,7 +18,15 @@ public class Command {
         return this;
     }
 
-    public List<String> readLines() {
-        return new BufferedReader(new InputStreamReader(this.process.getInputStream())).lines().collect(Collectors.toList());
+    public List<String> readLines() throws IOException {
+        var isr = new InputStreamReader(this.process.getInputStream());
+        var br = new BufferedReader(isr);
+        var lines = br.lines().collect(Collectors.toList());
+
+        this.process.getInputStream().close();
+        isr.close();
+        br.close();
+        
+        return lines;
     }
 }
