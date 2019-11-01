@@ -14,6 +14,7 @@ public class DiffCsvWriter {
 
     public void writeHeader() throws IOException {
         writer.write("Commit SHA,Java File,Old function signature,New function signature\n");
+        this.writer.flush();
     }
 
     public void writeDiff(String hash, String filePath, ParamAdditionDiff diff) throws IOException {
@@ -22,8 +23,7 @@ public class DiffCsvWriter {
                 diff.newMethod.getSignature().asString()));
         rowsCount++;
 
-        if (rowsCount%5 == 0){
-            this.writer.flush();
+        if (rowsCount % 10 == 0) {
             this.writer.flush();
         }
     }
