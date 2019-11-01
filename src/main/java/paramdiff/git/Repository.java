@@ -15,14 +15,19 @@ public class Repository {
         this.localFile = localFile;
     }
 
-    public Repository update() throws IOException {
+    public Repository update() throws IOException, InterruptedException {
         var runtime = Runtime.getRuntime();
+        Process process;
+        System.out.println("Updating repository. This can take some time.");
         if (localFile.exists()) {
-            runtime.exec("git pull", null, this.localFile);
+            process = runtime.exec("git pull", null, this.localFile);
         } else {
             this.localFile.mkdirs();
-            runtime.exec(String.format("git clone \"%s\" \"%s\"", remoteUrl, localFile.getAbsolutePath()), null, this.localFile);
+            process = runtime.exec(String.format("git clone \"%s\" \"%s\"", remoteUrl, localFile.getAbsolutePath()), null, this.localFile);
         }
+
+        process.waitFor();
+        System.out.println("Done updating repository.");
 
         return this;
     }
