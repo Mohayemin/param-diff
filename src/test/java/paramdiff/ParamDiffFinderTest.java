@@ -129,6 +129,15 @@ public class ParamDiffFinderTest {
         Assertions.assertEquals(1, paramDiff.size());
     }
 
+    @Test
+    public void findParamAddition_withSimpleBeanExample(){
+        var oldCode = getTestData("SimpleBean_1");
+        var newCode = getTestData("SimpleBean_2");
+        var paramDiff = new ParamDiffFinder()
+                .findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(0, paramDiff.size());
+    }
+
     private String getTestData(String fileName) {
         var filePath = new File("src/test/resources/test_data/" + fileName + ".java").getAbsolutePath();
         try {

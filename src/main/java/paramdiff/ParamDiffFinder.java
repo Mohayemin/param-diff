@@ -42,10 +42,8 @@ public class ParamDiffFinder {
         if (newType == null)
             return List.of();
 
-        var oldCandidateMethods = new HashSet<CallableDeclaration<?>>(oldType.getMethods());
-        oldCandidateMethods.addAll(oldType.getConstructors());
-        var newCandidateMethods = new HashSet<CallableDeclaration<?>>(newType.getMethods());
-        newCandidateMethods.addAll(newType.getConstructors());
+        var oldCandidateMethods = new HashSet<>(getCallables(oldType));
+        var newCandidateMethods = new HashSet<>(getCallables(newType));
 
         removeUnchangedMethods(oldType, newType, oldCandidateMethods, newCandidateMethods);
 
@@ -70,7 +68,7 @@ public class ParamDiffFinder {
 
     private void removeUnchangedMethods(TypeDeclaration<?> oldType, TypeDeclaration newType,
                                         HashSet<CallableDeclaration<?>> oldCandidates, HashSet newCandidates) {
-        for (var oldMethod : oldType.getMethods()) {
+        for (var oldMethod : getCallables(oldType)) {
             var newMethod = findMatchingMethod(newType, oldMethod);
             if (newMethod != null) {
                 newCandidates.remove(newMethod);
@@ -96,7 +94,7 @@ public class ParamDiffFinder {
         return null;
     }
 
-    private TypeDeclaration findMatchingClass(NodeList<TypeDeclaration<?>> typeList, TypeDeclaration typeToFind) {
+    private TypeDeclaration<?> findMatchingClass(NodeList<TypeDeclaration<?>> typeList, TypeDeclaration typeToFind) {
         var typesWithName = typeList.stream()
                 .filter(nt -> nt.getFullyQualifiedName().equals(typeToFind.getFullyQualifiedName()))
                 .collect(Collectors.toList());
@@ -104,5 +102,13 @@ public class ParamDiffFinder {
             return typesWithName.get(0);
         }
         return null;
+    }
+
+    private List<CallableDeclaration<?>> getCallables(TypeDeclaration<?> type){
+        var all = new ArrayList<CallableDeclaration<?>>();
+        all.addAll(type.getConstructors());
+        all.addAll(type.getMethods());
+
+        return all;
     }
 }
