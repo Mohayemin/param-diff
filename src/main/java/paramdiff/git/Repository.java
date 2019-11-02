@@ -16,6 +16,11 @@ public class Repository {
     }
 
     public Repository update() throws IOException, InterruptedException {
+        if (this.remoteUrl == null){
+            System.out.println("Repository URL is not supplied. Using local repository as it is.");
+            return this;
+        }
+
         var runtime = Runtime.getRuntime();
         Process process;
         System.out.println("Updating repository. This can take some time.");

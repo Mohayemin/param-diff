@@ -38,7 +38,7 @@ public class Program {
 
     private static void findDiffsForLocalRepo(Repository repository,
                                               DiffCsvWriter diffWriter) throws IOException {
-        System.out.println("Started processing repository");
+        System.out.println("Started processing repository.");
 
         var stopwatch = new Stopwatch().start();
         diffWriter.writeHeader();
