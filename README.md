@@ -4,7 +4,7 @@ ParamDiff is a tool that mines a given Java GitHub code repository. The program 
 The tool generates a CSV file with columns  `Commit SHA`, `Java File`, `Old function signature`, `New function signature`. 
 
 # How to run
-ParamDiff is an executable jar file that requires Java 12. [Click here to download it](https://github.com/Mohayemin/param-diff/releases/download/v1.0/ParamDiff.jar). This can be run with `java -jar` command. Here is an example:  
+ParamDiff is an executable jar file that requires Java 12. Download the latest version of the tool from the [release page](https://github.com/Mohayemin/param-diff/releases). This can be run with `java -jar` command. Here is an example:  
 ```
 java -jar ParamDiff.jar -url https://github.com/seaswalker/spring-analysis
 ```
