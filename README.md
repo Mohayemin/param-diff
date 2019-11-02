@@ -30,9 +30,9 @@ The tool has been run on the following Java git repositories:
 
 |   | Project  | Revisions  | Processed Files | Param Addition Found |
 | --:| :-------| :------:| :-:| :-: |
-| 1 | [Mockito](https://github.com/mockito/mockito)             |  5.2K | 14.5K | 101 |
+| 1 | [Elastic Search](https://github.com/elastic/elasticsearch)| 49.0K | 220.7K |6075 |
 | 2 | [RxJava](https://github.com/ReactiveX/RxJava)              |  5.6K | 24.9K | 104 |
-| 3 | [Elastic Search](https://github.com/elastic/elasticsearch)| 49.0K | - |
+| 3 | [Mockito](https://github.com/mockito/mockito)             |  5.2K | 14.5K | 101 |
 | 4 | [Book Keeper](https://github.com/apache/bookkeeper)       |  2.2K | 10.5K | 328 |
 | 5 | [Camel Quarkus](https://github.com/apache/camel-quarkus)  |  504 | 616 | 21 |
 
@@ -50,8 +50,19 @@ The followings are not considered as an addition of parameter
 1. `func(int) -> func(float)`
 2. `func(int, float) -> func(float, int, String)`. It may seem like an addition of parameter, but I have ignored this case.
 
+**Overloads**  
+One critical case is when a method has overloads, and parameters are added to more than one overloads in the same commit. For example, the old version had:
+* (1) `replaySupplier(Flowable, int)`
+* (2) `replaySupplier(Flowable, int, long, TimeUnit, Scheduler)`  
 
-I have excluded any merge revisions from processing. This is because generally any change that is found in a merge commit is also found earlier in a non-merge commit, where the developer actually made the change. Therefore considering merge would yield duplicate results.  
+New version has
+* (3) `replaySupplier(Flowable, int, boolean)`
+* (4) `replaySupplier(Flowable, int, long, TimeUnit, Scheduler, boolean)`
+
+The tool identifies (4) to be from both (1) and (2). There seems to be no way to correctly identify exactly from which old method (4) has been formed. It is possible to solve with a heuristic approach, but I wanted to keep all the possibilities.
+
+**Merge commits**  
+I have excluded any merge commits from processing. This is because generally any change that is found in a merge commit is also found earlier in a non-merge commit, where the developer actually made the change. Therefore considering merge would yield duplicate results.  
 
 # Scopes of improvement
 The tool parses the full modified file in a revision and compares it with its parent. Performance can be improved by only parsing the lines which were changed. 
