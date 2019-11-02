@@ -42,37 +42,37 @@ public class ParamDiffFinder {
         if (newType == null)
             return List.of();
 
-        var oldCandidateMethods = new HashSet<>(getCallables(oldType));
-        var newCandidateMethods = new HashSet<>(getCallables(newType));
+        var oldCandidateCallables = new HashSet<>(getCallables(oldType));
+        var newCandidateCallables = new HashSet<>(getCallables(newType));
 
-        removeUnchangedMethods(oldType, newType, oldCandidateMethods, newCandidateMethods);
+        removeUnchangedCallables(oldType, newType, oldCandidateCallables, newCandidateCallables);
 
         var diffs = new ArrayList<ParamAdditionDiff>();
-        for (var oldMethod : oldCandidateMethods) {
-            findParamAddedMethods(newCandidateMethods, oldMethod)
-                    .forEach(m -> diffs.add(new ParamAdditionDiff(oldMethod, m)));
+        for (var oldCallable : oldCandidateCallables) {
+            findParamAddedCallables(newCandidateCallables, oldCallable)
+                    .forEach(m -> diffs.add(new ParamAdditionDiff(oldCallable, m)));
         }
 
         return diffs;
     }
 
-    private Stream<CallableDeclaration<?>> findParamAddedMethods(HashSet<CallableDeclaration<?>> newCandidateMethods,
-                                                            CallableDeclaration<?> oldMethod) {
-        var overloads = newCandidateMethods.stream()
-                .filter(m -> m.getNameAsString().equals(oldMethod.getNameAsString()));
+    private Stream<CallableDeclaration<?>> findParamAddedCallables(HashSet<CallableDeclaration<?>> newCandidateCallables,
+                                                                   CallableDeclaration<?> oldCallable) {
+        var overloads = newCandidateCallables.stream()
+                .filter(m -> m.getNameAsString().equals(oldCallable.getNameAsString()));
         var overloadsWithMoreParams =
-                overloads.filter(m -> m.getParameters().size() > oldMethod.getParameters().size());
+                overloads.filter(m -> m.getParameters().size() > oldCallable.getParameters().size());
         return overloadsWithMoreParams
-                .filter(m -> isParamSuperSet(m, oldMethod));
+                .filter(m -> isParamSuperSet(m, oldCallable));
     }
 
-    private void removeUnchangedMethods(TypeDeclaration<?> oldType, TypeDeclaration newType,
-                                        HashSet<CallableDeclaration<?>> oldCandidates, HashSet newCandidates) {
-        for (var oldMethod : getCallables(oldType)) {
-            var newMethod = findMatchingMethod(newType, oldMethod);
-            if (newMethod != null) {
-                newCandidates.remove(newMethod);
-                oldCandidates.remove(oldMethod);
+    private void removeUnchangedCallables(TypeDeclaration<?> oldType, TypeDeclaration newType,
+                                          HashSet<CallableDeclaration<?>> oldCandidates, HashSet newCandidates) {
+        for (var oldCallable : getCallables(oldType)) {
+            var newCallable = findMatchingCallable(newType, oldCallable);
+            if (newCallable != null) {
+                newCandidates.remove(newCallable);
+                oldCandidates.remove(oldCallable);
             }
         }
     }
@@ -81,15 +81,15 @@ public class ParamDiffFinder {
         return Sequences.containsNonContinuous(getParamTypes(sup), getParamTypes(sub));
     }
 
-    private List<Type> getParamTypes(CallableDeclaration<?> method) {
-        return method.getParameters().stream().map(p -> p.getType()).collect(Collectors.toList());
+    private List<Type> getParamTypes(CallableDeclaration<?> callable) {
+        return callable.getParameters().stream().map(p -> p.getType()).collect(Collectors.toList());
     }
 
-    private CallableDeclaration<?> findMatchingMethod(TypeDeclaration<?> type, CallableDeclaration<?> method) {
-        var matchingMethodList = type.getCallablesWithSignature(method.getSignature());
+    private CallableDeclaration<?> findMatchingCallable(TypeDeclaration<?> type, CallableDeclaration<?> callable) {
+        var matchingCallableList = type.getCallablesWithSignature(callable.getSignature());
 
-        if (matchingMethodList.size() > 0) {
-            return matchingMethodList.get(0);
+        if (matchingCallableList.size() > 0) {
+            return matchingCallableList.get(0);
         }
         return null;
     }
