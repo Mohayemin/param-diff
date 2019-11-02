@@ -3,6 +3,7 @@ package util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SequenceTest {
@@ -37,5 +38,13 @@ public class SequenceTest {
         var sup = List.of("one", "three");
 
         Assertions.assertFalse(Sequences.containsNonContinuous(sup, sub));
+    }
+
+    @Test
+    public void containsNonContinuous_subIsEmpty_true() {
+        var sub = new ArrayList<String>();
+        var sup = List.of("one");
+
+        Assertions.assertTrue(Sequences.containsNonContinuous(sup, sub));
     }
 }

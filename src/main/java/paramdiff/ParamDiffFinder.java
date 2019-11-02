@@ -4,8 +4,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.Type;
 import util.Sequences;
 
@@ -43,8 +42,11 @@ public class ParamDiffFinder {
         if (newType == null)
             return List.of();
 
-        var oldCandidateMethods = new HashSet<>(oldType.getMethods());
-        var newCandidateMethods = new HashSet<>(newType.getMethods());
+        var oldCandidateMethods = new HashSet<CallableDeclaration<?>>(oldType.getMethods());
+        oldCandidateMethods.addAll(oldType.getConstructors());
+        var newCandidateMethods = new HashSet<CallableDeclaration<?>>(newType.getMethods());
+        newCandidateMethods.addAll(newType.getConstructors());
+
         removeUnchangedMethods(oldType, newType, oldCandidateMethods, newCandidateMethods);
 
         var diffs = new ArrayList<ParamAdditionDiff>();
@@ -56,8 +58,8 @@ public class ParamDiffFinder {
         return diffs;
     }
 
-    private Stream<MethodDeclaration> findParamAddedMethods(HashSet<MethodDeclaration> newCandidateMethods,
-                                                            MethodDeclaration oldMethod) {
+    private Stream<CallableDeclaration<?>> findParamAddedMethods(HashSet<CallableDeclaration<?>> newCandidateMethods,
+                                                            CallableDeclaration<?> oldMethod) {
         var overloads = newCandidateMethods.stream()
                 .filter(m -> m.getNameAsString().equals(oldMethod.getNameAsString()));
         var overloadsWithMoreParams =
@@ -67,7 +69,7 @@ public class ParamDiffFinder {
     }
 
     private void removeUnchangedMethods(TypeDeclaration<?> oldType, TypeDeclaration newType,
-                                        HashSet<MethodDeclaration> oldCandidates, HashSet newCandidates) {
+                                        HashSet<CallableDeclaration<?>> oldCandidates, HashSet newCandidates) {
         for (var oldMethod : oldType.getMethods()) {
             var newMethod = findMatchingMethod(newType, oldMethod);
             if (newMethod != null) {
@@ -77,19 +79,16 @@ public class ParamDiffFinder {
         }
     }
 
-    private boolean isParamSuperSet(MethodDeclaration sup, MethodDeclaration sub) {
+    private boolean isParamSuperSet(CallableDeclaration<?> sup, CallableDeclaration<?> sub) {
         return Sequences.containsNonContinuous(getParamTypes(sup), getParamTypes(sub));
     }
 
-    private List<Type> getParamTypes(MethodDeclaration sup) {
-        return sup.getParameters().stream().map(p -> p.getType()).collect(Collectors.toList());
+    private List<Type> getParamTypes(CallableDeclaration<?> method) {
+        return method.getParameters().stream().map(p -> p.getType()).collect(Collectors.toList());
     }
 
-    private MethodDeclaration findMatchingMethod(TypeDeclaration type, MethodDeclaration method) {
-        var params = method.getParameters().stream()
-                .map(parameter -> parameter.getType().asString())
-                .collect(Collectors.toList()).toArray(new String[0]);
-        List<MethodDeclaration> matchingMethodList = type.getMethodsBySignature(method.getNameAsString(), params);
+    private CallableDeclaration<?> findMatchingMethod(TypeDeclaration<?> type, CallableDeclaration<?> method) {
+        var matchingMethodList = type.getCallablesWithSignature(method.getSignature());
 
         if (matchingMethodList.size() > 0) {
             return matchingMethodList.get(0);

@@ -106,11 +106,27 @@ public class ParamDiffFinderTest {
     }
 
     @Test
-    public void findParam_realData_noChange(){
+    public void findParamAddition_realData_noChange(){
         var oldCode = getTestData("v_old");
         var newCode = getTestData("v_new");
         var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
         Assertions.assertEquals(0, paramDiff.size());
+    }
+
+    @Test
+    public void findParamAddition_fromNoParamToMultiParam(){
+        var oldCode = getTestData("Calculator0");
+        var newCode = getTestData("Calculator1");
+        var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(1, paramDiff.size());
+    }
+
+    @Test
+    public void findParamAddition_constructor(){
+        var oldCode = getTestData("Calculator1");
+        var newCode = getTestData("Calculator_Constructor");
+        var paramDiff = new ParamDiffFinder().findParamAddition(oldCode, newCode);
+        Assertions.assertEquals(1, paramDiff.size());
     }
 
     private String getTestData(String fileName) {
