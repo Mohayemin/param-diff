@@ -28,13 +28,14 @@ The `outdir` parameter is optional. However, at least one of the `url` and `rn` 
 # Results
 The tool has been run on the following Java git repositories:
 
-|   | Project  | Revisions  | Processed Files | Param Addition Found |
-| --:| :-------| :------:| :-:| :-: |
-| 1 | [Elastic Search](https://github.com/elastic/elasticsearch)| 49.0K | 220.7K |6075 |
-| 2 | [RxJava](https://github.com/ReactiveX/RxJava)              |  5.6K | 24.9K | 104 |
-| 3 | [Mockito](https://github.com/mockito/mockito)             |  5.2K | 14.5K | 101 |
-| 4 | [Book Keeper](https://github.com/apache/bookkeeper)       |  2.2K | 10.5K | 328 |
-| 5 | [Camel Quarkus](https://github.com/apache/camel-quarkus)  |  504 | 616 | 21 |
+|   | Project  | Stars | Revisions  | Processed Files | Param Addition Found |
+| --:| :-------| --: |:------:| :-:| :-: |
+| 1 | [Elastic Search](https://github.com/elastic/elasticsearch) | 45.2K | 49.0K | 220.7K |10140 |
+| 2 | [RxJava](https://github.com/ReactiveX/RxJava)             | 40.9K |  5.6K | 24.9K | 163 |
+| 3 | [Mockito](https://github.com/mockito/mockito)            | 9.8K |  5.2K | 14.5K | 144 |
+| 4 | [Book Keeper](https://github.com/apache/bookkeeper)      | 778 |  2.2K | 10.5K | 545 |
+| 5 | [Camel Quarkus](https://github.com/apache/camel-quarkus)  | 30 |  504 | 616 | 26 |
+| 6 | [Spring Analysis](https://github.com/seaswalker/spring-analysis)  | 5.7K |  89 | 53 | 2 |
 
 The results of the projects can be found in the `results` directory of the repository.
 
